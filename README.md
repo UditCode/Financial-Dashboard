@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿# Finance Dashboard UI
 
 A responsive frontend dashboard that demonstrates financial data visualization, transaction exploration, simple role-based behavior, and derived insights using mock data.
@@ -100,3 +101,7 @@ npm run build
 - Dark mode toggle
 - CSV export for filtered transactions
 - Inline edit/delete controls for admin
+=======
+# Financial-Dashboard
+This is a financial dashboard UI
+>>>>>>> 2d7a4835bdc27e63055394d7de61b5bcc39b5161
