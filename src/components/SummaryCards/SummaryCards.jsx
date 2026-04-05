@@ -1,10 +1,11 @@
-﻿import { formatCurrency } from '../utils';
+﻿import { formatCurrency } from '../../utils';
+import './SummaryCards.css';
 
 export default function SummaryCards({ totalBalance, income, expenses }) {
   const cards = [
-    { label: 'Total Balance', value: totalBalance, className: 'tone-balance' },
-    { label: 'Income', value: income, className: 'tone-income' },
-    { label: 'Expenses', value: expenses, className: 'tone-expense' }
+    { label: 'Total Balance', value: totalBalance, className: 'summary-card-balance' },
+    { label: 'Income', value: income, className: 'summary-card-income' },
+    { label: 'Expenses', value: expenses, className: 'summary-card-expense' }
   ];
 
   return (

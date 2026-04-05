@@ -1,10 +1,13 @@
-﻿import { useMemo, useState } from 'react';
-import SummaryCards from './components/SummaryCards';
-import { CategoryChart, TrendChart } from './components/Charts';
-import TransactionsTable from './components/TransactionsTable';
-import Insights from './components/Insights';
+﻿import { useMemo, useState, useEffect } from 'react';
+import TopBar from './components/TopBar/TopBar';
+import SummaryCards from './components/SummaryCards/SummaryCards';
+import TrendChart from './components/TrendChart/TrendChart';
+import CategoryChart from './components/CategoryChart/CategoryChart';
+import TransactionsSection from './components/TransactionsSection/TransactionsSection';
+import InsightsPanel from './components/InsightsPanel/InsightsPanel';
 import { categoryOptions, initialTransactions, roleOptions } from './data/mockData';
 import { getMonthKey } from './utils';
+import './App.css';
 
 function buildTrendData(transactions) {
   const sorted = [...transactions].sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -83,6 +86,7 @@ function buildInsights(transactions) {
 
 export default function App() {
   const [role, setRole] = useState('viewer');
+  const [theme, setTheme] = useState(() => localStorage.getItem('finance-theme') || 'light');
   const [transactions, setTransactions] = useState(initialTransactions);
   const [filters, setFilters] = useState({
     search: '',
@@ -90,6 +94,11 @@ export default function App() {
     category: 'All',
     sortBy: 'date-desc'
   });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('finance-theme', theme);
+  }, [theme]);
 
   const filteredTransactions = useMemo(() => {
     let result = [...transactions];
@@ -145,19 +154,18 @@ export default function App() {
     setFilters((prev) => ({ ...prev, [field]: value }));
   };
 
-  const addMockTransaction = () => {
+  const addTransaction = (transactionInput) => {
     if (role !== 'admin') {
       return;
     }
 
-    const now = new Date();
     const newTransaction = {
-      id: `T-${Math.floor(Math.random() * 100000)}`,
-      date: now.toISOString().slice(0, 10),
-      description: 'Admin Added - Office Supplies',
-      category: 'Utilities',
-      type: 'expense',
-      amount: Number((Math.random() * 120 + 10).toFixed(2))
+      id: `T-${Date.now()}`,
+      date: transactionInput.date,
+      description: transactionInput.description.trim(),
+      category: transactionInput.category,
+      type: transactionInput.type,
+      amount: Number(transactionInput.amount)
     };
 
     setTransactions((prev) => [newTransaction, ...prev]);
@@ -165,43 +173,38 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      <header className="top-bar">
-        <div>
-          <p className="eyebrow">Finance Monitor</p>
-          <h1>Personal Finance Dashboard</h1>
-          <p className="subtitle">Track your money, review transactions, and spot spending signals.</p>
-        </div>
-
-        <label className="role-switcher" htmlFor="role">
-          <span>Role</span>
-          <select id="role" value={role} onChange={(e) => setRole(e.target.value)}>
-            {roleOptions.map((option) => (
-              <option key={option} value={option}>
-                {option.toUpperCase()}
-              </option>
-            ))}
-          </select>
-        </label>
-      </header>
+      <TopBar
+        role={role}
+        roleOptions={roleOptions}
+        onRoleChange={setRole}
+        theme={theme}
+        onThemeToggle={() => setTheme((prev) => (prev === 'light' ? 'dark' : 'light'))}
+      />
 
       <SummaryCards totalBalance={totals.totalBalance} income={totals.income} expenses={totals.expenses} />
 
-      <section className="grid-2">
-        <TrendChart data={trendData} />
-        <CategoryChart data={categoryData} />
+      <section className="app-main-grid">
+        <div className="app-content-stack">
+          <section className="app-chart-grid">
+            <TrendChart data={trendData} />
+            <CategoryChart data={categoryData} />
+          </section>
+
+          <TransactionsSection
+            data={filteredTransactions}
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            onSortChange={(value) => handleFilterChange('sortBy', value)}
+            role={role}
+            onAddTransaction={addTransaction}
+            categories={categoryOptions}
+          />
+        </div>
+
+        <aside className="app-insights-rail">
+          <InsightsPanel insights={insights} />
+        </aside>
       </section>
-
-      <TransactionsTable
-        data={filteredTransactions}
-        filters={filters}
-        onFilterChange={handleFilterChange}
-        onSortChange={(value) => handleFilterChange('sortBy', value)}
-        role={role}
-        onAddTransaction={addMockTransaction}
-        categories={categoryOptions}
-      />
-
-      <Insights insights={insights} />
     </div>
   );
 }
