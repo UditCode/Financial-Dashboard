@@ -59,6 +59,10 @@ Managed with React state/hooks:
 - Responsive behavior for desktop/tablet/mobile
 - Graceful handling of no-data/no-results states
 
+### 7. Dark Mode Toggle
+- It can switch to Dark/Light mode
+
+
 ## Project Structure
 
 ```text
@@ -83,11 +87,6 @@ npm install
 npm run dev
 ```
 
-Build for production check:
-
-```bash
-npm run build
-```
 
 ## Assumptions
 
@@ -95,13 +94,4 @@ npm run build
 - Currency is displayed in USD for consistency.
 - "Add Mock Transaction" demonstrates role behavior without backend/API.
 
-## Optional Improvements (if needed)
 
-- Persist transactions to localStorage
-- Dark mode toggle
-- CSV export for filtered transactions
-- Inline edit/delete controls for admin
-=======
-# Financial-Dashboard
-This is a financial dashboard UI
->>>>>>> 2d7a4835bdc27e63055394d7de61b5bcc39b5161
